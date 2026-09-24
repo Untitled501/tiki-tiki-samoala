@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Help Tiki Tiki Samoala | FundMyTiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #FFE3BC;
+    --sand: #F4A640;
+    --sunset: #D9531E;
+    --wave: #0FA894;
+    --palm: #2B7A3A;
+    --wood: #5C2F14;
+    --flower: #FF4F8B;
+    --paper: #FFF6E8;
+    --display: 'Lilita One', 'Arial Rounded MT Bold', 'Arial Black', sans-serif;
+    --body: 'Nunito', 'Trebuchet MS', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--body); background: var(--paper); color: var(--wood); line-height: 1.6; font-size: 17px; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 3px solid var(--flower); outline-offset: 3px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; }
+
+  /* top bar */
+  .bar { position: absolute; top: 0; left: 0; right: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; color: var(--paper); }
+  .logo { font-family: var(--display); font-size: 1.5rem; text-shadow: 2px 2px 0 var(--wood); }
+  .bar small { background: rgba(92,47,20,.55); padding: 4px 12px; border-radius: 99px; }
+
+  /* hero: the photo is the star */
+  .hero { position: relative; min-height: min(92vh, 820px); background: url("tiki-photos/hero.jpg") center 35% / cover no-repeat; display: flex; align-items: flex-end; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(60,25,8,.7) 0%, rgba(60,25,8,0) 42%), linear-gradient(to bottom, rgba(92,47,20,.35) 0%, rgba(92,47,20,0) 25%, rgba(92,47,20,0) 60%, rgba(60,25,8,.8) 100%); }
+  .hero-text { position: relative; z-index: 1; max-width: 1100px; width: 100%; margin: 0 auto; padding: 0 24px 48px; color: var(--paper); }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 3.9rem); color: var(--sky); text-shadow: 4px 4px 0 var(--sunset), 8px 8px 0 var(--wood); max-width: 10ch; }
+  .hero p { font-size: 1.2rem; font-weight: 700; margin-top: 14px; max-width: 26ch; text-shadow: 1px 1px 3px rgba(0,0,0,.6); }
+
+  /* layout */
+  main { max-width: 1100px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 360px; gap: 44px; }
+  .col { min-width: 0; }
+  section { margin: 56px 0; }
+  section > h2 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); margin-bottom: 18px; color: var(--sunset); }
+  p + p { margin-top: 12px; }
+
+  /* meet tiki */
+  .meet { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: start; }
+  .meet img { border-radius: 24px; border: 5px solid var(--wood); transform: rotate(-3deg); box-shadow: 6px 6px 0 var(--wave); }
+  .facts { margin-top: 16px; border-top: 3px dotted var(--sand); }
+  .facts div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-bottom: 3px dotted var(--sand); }
+  .facts dt { font-weight: 900; }
+  .facts dd { text-align: right; }
+
+  /* donation box */
+  .donate-box { position: sticky; top: 16px; margin-top: -70px; z-index: 3; background: var(--paper); border: 5px solid var(--wood); border-radius: 26px; padding: 24px; box-shadow: 8px 8px 0 var(--sand); align-self: start; }
+  .donate-face { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 4px solid var(--wood); margin: -62px auto 10px; background: var(--sky); }
+  .raised { font-family: var(--display); font-size: 2.6rem; color: var(--wave); line-height: 1; }
+  .goal { font-size: .95rem; margin-top: 4px; }
+  .progress { height: 20px; background: #F1DDBF; border-radius: 99px; margin: 14px 0; overflow: hidden; border: 3px solid var(--wood); }
+  .progress div { height: 100%; width: 0.4%; background: var(--flower); min-width: 6px; transition: width .6s; }
+  .stats { font-size: .92rem; margin-bottom: 16px; }
+  .btn { display: block; width: 100%; font-family: var(--display); font-size: 1.2rem; padding: 13px; border: 3px solid var(--wood); border-radius: 14px; cursor: pointer; margin-top: 10px; color: var(--wood); transition: transform .1s; }
+  .btn:active { transform: translate(3px, 3px); }
+  .btn-main { background: var(--sand); box-shadow: 4px 4px 0 var(--wood); }
+  .btn-alt { background: var(--paper); }
+  .coconuts { margin-top: 16px; text-align: center; font-weight: 700; }
+  .donors { margin-top: 18px; border-top: 3px dotted var(--sand); padding-top: 14px; }
+  .donors h3 { font-size: 1.15rem; margin-bottom: 8px; color: var(--sunset); }
+  .donors li { list-style: none; display: flex; justify-content: space-between; gap: 10px; font-size: .92rem; padding: 5px 0; }
+  .donors li b { white-space: nowrap; color: var(--flower); }
+
+  /* slideshow */
+  .slides { background: var(--wood); border-radius: 26px; overflow: hidden; color: var(--paper); }
+  .slide { display: none; }
+  .slide.active { display: block; animation: pop .35s ease-out; }
+  @keyframes pop { from { opacity: 0; } }
+  .slide-pic { height: 340px; background: #2a1408; display: flex; justify-content: center; }
+  .slide-pic img { height: 100%; width: 100%; object-fit: cover; }
+  .slide-pic img.tall { width: auto; object-fit: contain; }
+  .slide-text { padding: 22px 28px 26px; }
+  .slide-text .ch { font-weight: 900; color: var(--sand); font-size: .95rem; }
+  .slide h3 { color: var(--sky); font-size: 1.7rem; margin: 2px 0 8px; }
+  .slide-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: #47230E; }
+  .slide-nav button { background: var(--sand); border: 0; border-radius: 12px; font-family: var(--display); font-size: 1.05rem; padding: 8px 18px; cursor: pointer; color: var(--wood); }
+  .slide-nav button:disabled { opacity: .35; cursor: default; }
+  .dots { display: flex; gap: 8px; }
+  .dots span { width: 10px; height: 10px; border-radius: 50%; background: #7A4A2A; }
+  .dots span.on { background: var(--flower); }
+
+  /* troubles */
+  .trouble { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 18px 0; border-bottom: 3px dotted var(--sand); }
+  .trouble .em { font-size: 2.3rem; }
+  .trouble h3 { font-family: var(--body); font-weight: 900; font-size: 1.15rem; }
+  .severity { display: inline-block; font-size: .82rem; font-weight: 900; background: var(--flower); color: var(--paper); padding: 2px 12px; border-radius: 99px; margin-top: 6px; }
+
+  /* budget */
+  .table-wrap { overflow-x: auto; border-radius: 18px; border: 4px solid var(--wood); }
+  table { width: 100%; border-collapse: collapse; background: var(--paper); }
+  th, td { text-align: left; padding: 11px 16px; border-bottom: 2px solid #F1DDBF; }
+  th { background: var(--wave); color: var(--paper); font-family: var(--display); font-weight: 400; font-size: 1.1rem; }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; }
+  tfoot td { font-weight: 900; background: var(--sky); border-bottom: 0; }
+
+  /* updates */
+  .update { border-left: 5px solid var(--wave); padding: 4px 0 4px 18px; margin-bottom: 22px; }
+  .update time { font-weight: 900; color: var(--wave); font-size: .92rem; }
+
+  /* comments */
+  .comment { background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 12px; border: 3px solid #F1DDBF; }
+  .comment b { color: var(--sunset); }
+
+  /* footer uses the sad photo */
+  footer { position: relative; margin-top: 56px; padding: 90px 24px 40px; text-align: center; color: var(--paper); background: url("tiki-photos/slide7-sad.jpg") center / cover; }
+  footer::before { content: ""; position: absolute; inset: 0; background: rgba(30,20,40,.72); }
+  footer * { position: relative; }
+  footer h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--sky); margin-bottom: 10px; }
+  footer small { display: block; margin-top: 22px; opacity: .8; }
+
+  /* modal */
+  .modal { position: fixed; inset: 0; background: rgba(60,25,8,.75); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
+  .modal.open { display: flex; }
+  .modal-card { background: var(--paper); border: 5px solid var(--wood); border-radius: 26px; padding: 28px; max-width: 440px; box-shadow: 8px 8px 0 var(--flower); text-align: center; }
+  .modal-card .big { font-size: 4rem; line-height: 1.1; }
+  .modal-card h3 { color: var(--sunset); font-size: 1.7rem; margin: 8px 0; }
+
+  @media (max-width: 860px) {
+    .hero { min-height: 0; display: block; padding-top: 58vh; background-color: #3C1908; background-size: auto 62vh; background-position: 45% top; }
+    .hero::after { background: linear-gradient(to bottom, rgba(60,25,8,.35) 0%, rgba(60,25,8,0) 12%, rgba(60,25,8,0) 50%, #3C1908 62vh); }
+    .hero-text { padding-top: 8px; }
+    .hero h1 { max-width: none; }
+    main { grid-template-columns: 1fr; }
+    .donate-box { position: static; margin-top: 60px; }
+    .meet { grid-template-columns: 1fr; }
+    .meet img { max-width: 240px; margin: 0 auto; }
+    .slide-pic { height: 260px; }
+    .bar small { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="logo">FundMyTiki</div>
+  <small>The #1 fundraising site on Coconoodle Island</small>
+</div>
+
+<header class="hero" role="img" aria-label="Tiki Tiki Samoala standing on a sunny beach">
+  <div class="hero-text">
+    <h1>Help Tiki Tiki Samoala Get His Life Back</h1>
+    <p>He is a tiki statue. He is made of wood. He is smiling, but only on the outside. Please help.</p>
+  </div>
+</header>
+
+<main>
+  <div class="col">
+
+    <section aria-labelledby="meet-h">
+      <h2 id="meet-h">Meet Tiki</h2>
+      <div class="meet">
+        <img src="tiki-photos/tiki-portrait.jpg" alt="Tiki Tiki Samoala, a wooden tiki with leaves on his head and a pink flower">
+        <div>
+          <p>Tiki Tiki Samoala has stood on the same beach for 400 years. He has never once stopped smiling, because his face is carved that way. He cannot stop. He has tried.</p>
+          <p>This year, everything went wrong. He needs your help.</p>
+          <dl class="facts">
+            <div><dt>Made of</dt><dd>100% wood</dd></div>
+            <div><dt>Height</dt><dd>1 tiki</dd></div>
+            <div><dt>Hobbies</dt><dd>Standing, smiling, standing</dd></div>
+            <div><dt>Biggest fear</dt><dd>Termites, and Crabbo</dd></div>
+            <div><dt>Best friend</dt><dd>Kevin (a coconut)</dd></div>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="story-h">
+      <h2 id="story-h">The tragic tale</h2>
+      <div class="slides">
+        <div class="slide active">
+          <div class="slide-pic"><img src="tiki-photos/slide1-paradise.jpg" alt="Tiki on a bright, happy beach"></div>
+          <div class="slide-text"><div class="ch">Chapter 1</div><h3>Once upon a time</h3><p>Tiki Tiki Samoala lived a perfect life. He had a beach, a flower behind his ear, a nice necklace, and 4,000 coconuts in savings. Life was tiki. Life was samoala.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img src="tiki-photos/slide2-investment.jpg" alt="Close-up of Tiki's face with a green money glow"></div>
+          <div class="slide-text"><div class="ch">Chapter 2</div><h3>The investment</h3><p>A seagull named Gerald told him about SkibidiCoin. "It can only go up," said Gerald. Tiki's eyes got very big. Well, they were already very big. They got bigger.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img class="tall" src="tiki-photos/slide3-crash.jpg" alt="Tiki upside down in red"></div>
+          <div class="slide-text"><div class="ch">Chapter 3</div><h3>It did not go up</h3><p>SkibidiCoin dropped 100% in eleven minutes. Tiki's whole world turned upside down. Gerald flew away and has not been seen since.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img src="tiki-photos/slide4-crabbo.jpg" alt="The beach glowing a scary red"></div>
+          <div class="slide-text"><div class="ch">Chapter 4</div><h3>The loan</h3><p>He borrowed 50 coconuts from Crabbo Gambino, the most dangerous crab on the island. The interest rate is "one pinch per day." The beach has not looked the same since.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img class="tall" src="tiki-photos/slide5-termites.jpg" alt="Tiki looking sickly green"></div>
+          <div class="slide-text"><div class="ch">Chapter 5</div><h3>The termites</h3><p>Then the termites showed up. They looked at the palm trees. Then they looked at Tiki. Tiki is made of wood. Tiki has not slept since Tuesday.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img class="tall" src="tiki-photos/slide6-mugshot.jpg" alt="Black and white mugshot of Tiki, still smiling"></div>
+          <div class="slide-text"><div class="ch">Chapter 6</div><h3>The buffet ban</h3><p>He was arrested at the all-you-can-eat pineapple buffet for "eating all of it." He says that was the whole point of the buffet. He smiled in his mugshot. He had no choice.</p></div>
+        </div>
+        <div class="slide">
+          <div class="slide-pic"><img src="tiki-photos/slide7-sad.jpg" alt="The same beach, now gray and gloomy"></div>
+          <div class="slide-text"><div class="ch">Chapter 7</div><h3>And now, you</h3><p>The beach is gray. The waves are sad. Tiki has one coconut and his dignity left, and he is willing to sell the dignity. Please help before Crabbo comes back.</p></div>
+        </div>
+        <div class="slide-nav">
+          <button id="prev" aria-label="Previous slide">Back</button>
+          <div class="dots" id="dots" aria-hidden="true"></div>
+          <button id="next" aria-label="Next slide">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="troubles-h">
+      <h2 id="troubles-h">His current troubles</h2>
+      <div class="trouble"><div class="em">🦀</div><div><h3>Owes Crabbo Gambino 50 coconuts</h3><p>Crabbo has started leaving tiny threatening notes in the sand. The tide keeps washing them away, which somehow makes it scarier.</p><span class="severity">Danger level: pinchy</span></div></div>
+      <div class="trouble"><div class="em">🐜</div><div><h3>Is made of wood, surrounded by termites</h3><p>Doctors say this is "a very bad combination." He has been wearing a raincoat as protection. It does not work. He knows it does not work.</p><span class="severity">Danger level: crunchy</span></div></div>
+      <div class="trouble"><div class="em">🌺</div><div><h3>The flower is wilting</h3><p>The pink flower behind his ear is the last nice thing he owns. It has one day left. He cannot afford a new one.</p><span class="severity">Danger level: fashion emergency</span></div></div>
+      <div class="trouble"><div class="em">😁</div><div><h3>Cannot stop smiling</h3><p>His face is carved into a grin, so nobody believes he is sad. The bank thought he was joking. The judge thought he was joking. He was not joking.</p><span class="severity">Danger level: misunderstood</span></div></div>
+      <div class="trouble"><div class="em">🥥</div><div><h3>Only one coconut left</h3><p>He has named it Kevin. He talks to Kevin. Kevin does not talk back, but Kevin is a good listener.</p><span class="severity">Danger level: lonely</span></div></div>
+    </section>
+
+    <section aria-labelledby="budget-h">
+      <h2 id="budget-h">Where your money goes</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Paying back Crabbo Gambino (so he stops pinching)</td><td>$50</td></tr>
+            <tr><td>Termite-proof paint for his whole body</td><td>$12,000</td></tr>
+            <tr><td>A fresh flower for behind his ear, every day, forever</td><td>$80,000</td></tr>
+            <tr><td>Lawyer to fight the pineapple buffet ban</td><td>$250,000</td></tr>
+            <tr><td>Finding Gerald and making him say sorry</td><td>$500,000</td></tr>
+            <tr><td>A friend for Kevin the coconut</td><td>$3</td></tr>
+            <tr><td>A bigger beach</td><td>$999,157,947</td></tr>
+          </tbody>
+          <tfoot><tr><td>Total needed</td><td>$1,000,000,000</td></tr></tfoot>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="updates-h">
+      <h2 id="updates-h">Updates from Tiki</h2>
+      <div class="update"><time>Day 12</time><p>Crabbo was seen near the big wave. I tried to run but I do not have knees. Please donate faster.</p></div>
+      <div class="update"><time>Day 7</time><p>Someone donated a shiny rock. Thank you. I cannot buy anything with it but I have been looking at it a lot. I am smiling but I am always smiling so that does not mean anything.</p></div>
+      <div class="update"><time>Day 1</time><p>Hello it is me Tiki Tiki Samoala. I have made this page. Please share it with everyone you know and also everyone you do not know.</p></div>
+    </section>
+
+    <section aria-labelledby="comments-h">
+      <h2 id="comments-h">Words of support</h2>
+      <div class="comment"><b>Crabbo Gambino</b><p>i know where u stand tiki. u always stand there. u cant move</p></div>
+      <div class="comment"><b>Kevin (coconut)</b><p>...</p></div>
+      <div class="comment"><b>Gerald the Seagull</b><p>have u heard about SkibidiCoin 2? cant go down twice</p></div>
+      <div class="comment"><b>A Termite</b><p>stay strong king 🪵 (yum)</p></div>
+      <div class="comment"><b>The Pink Flower</b><p>i am not wilting i am just tired</p></div>
+    </section>
+  </div>
+
+  <aside class="donate-box" aria-label="Donation progress">
+    <img class="donate-face" src="tiki-photos/tiki-face.jpg" alt="">
+    <div class="raised" id="raised">$3.47</div>
+    <div class="goal">raised of a <b>$1,000,000,000</b> goal</div>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="stats"><b id="donorCount">4</b> donors, and 1 very aggressive crab</div>
+    <button class="btn btn-main" id="donateBtn">Donate now</button>
+    <button class="btn btn-alt" id="coconutBtn">Give a coconut</button>
+    <button class="btn btn-alt" id="shareBtn">Share</button>
+    <div class="coconuts" id="coconutMsg" aria-live="polite">🥥 0 coconuts given</div>
+    <div class="donors">
+      <h3>Recent donors</h3>
+      <ul id="donorList">
+        <li><span>Anonymous Seagull</span><b>1 shiny rock</b></li>
+        <li><span>Tiki's Mom (a tree)</span><b>$3.00</b></li>
+        <li><span>A Nice Crab (not Crabbo)</span><b>$0.47</b></li>
+        <li><span>Kevin</span><b>moral support</b></li>
+      </ul>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <h2>Do it for Tiki</h2>
+  <p>Every coconut counts. Kevin is watching.</p>
+  <small>FundMyTiki is a joke. Tiki Tiki Samoala is not real and cannot receive money. Please do not send money. Kevin is also not real.</small>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <div class="big" id="modalEmoji">🚫</div>
+    <h3 id="modalTitle">Donation failed</h3>
+    <p id="modalText"></p>
+    <button class="btn btn-main" id="closeModal">Okay fine</button>
+  </div>
+</div>
+
+<script>
+  // Slideshow
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.getElementById('dots');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const modal = document.getElementById('modal');
+  let current = 0;
+  slides.forEach(() => dots.appendChild(document.createElement('span')));
+  function show(i) {
+    slides[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    [...dots.children].forEach((d, n) => d.classList.toggle('on', n === current));
+    prev.disabled = current === 0;
+    next.textContent = current === slides.length - 1 ? 'Again' : 'Next';
+  }
+  prev.onclick = () => current > 0 && show(current - 1);
+  next.onclick = () => show((current + 1) % slides.length);
+  document.addEventListener('keydown', e => {
+    if (modal.classList.contains('open')) { if (e.key === 'Escape') closeModal(); return; }
+    if (e.key === 'ArrowRight') next.click();
+    if (e.key === 'ArrowLeft') prev.click();
+  });
+  show(0);
+
+  // Modal
+  const closeBtn = document.getElementById('closeModal');
+  function openModal(emoji, title, text) {
+    document.getElementById('modalEmoji').textContent = emoji;
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalText').textContent = text;
+    modal.classList.add('open');
+    closeBtn.focus();
+  }
+  function closeModal() { modal.classList.remove('open'); }
+  closeBtn.onclick = closeModal;
+  modal.onclick = e => { if (e.target === modal) closeModal(); };
+
+  // Donate: always fails, a new excuse each time
+  const reasons = [
+    ['🥥', 'Tiki Tiki Samoala only accepts payment in coconuts. Try the coconut button.'],
+    ['🦀', 'Crabbo Gambino intercepted your donation. He says thank you.'],
+    ['📉', 'Your donation was accidentally turned into SkibidiCoin. It is now worth $0.'],
+    ['🐜', 'The termites ate the payment server. It was made of wood. Everything here is made of wood.'],
+    ['🌊', 'A big wave washed your donation out to sea. Tiki watched it go. He was smiling. He is always smiling.'],
+    ['🐦', 'Gerald the Seagull stole your donation and flew away. Classic Gerald.']
+  ];
+  let r = 0;
+  document.getElementById('donateBtn').onclick = () => {
+    const [emoji, text] = reasons[r++ % reasons.length];
+    openModal(emoji, 'Donation failed', text);
+  };
+
+  // Coconuts: the only thing that "works"
+  let coconuts = 0, raised = 3.47;
+  const replies = [
+    'Kevin has a friend now!',
+    'Tiki is crying (happy tears, they are made of sap)',
+    'Crabbo is 1 coconut less angry',
+    'The flower perked up a little',
+    'The termites are jealous',
+    'This is the best day of Tiki\'s life'
+  ];
+  document.getElementById('coconutBtn').onclick = () => {
+    coconuts++;
+    raised += 0.01;
+    document.getElementById('raised').textContent = '$' + raised.toFixed(2);
+    document.getElementById('bar').style.width = Math.min(0.4 + coconuts * 2, 100) + '%';
+    document.getElementById('coconutMsg').textContent =
+      '🥥 ' + coconuts + (coconuts === 1 ? ' coconut' : ' coconuts') + ' given. ' + replies[(coconuts - 1) % replies.length];
+    if (coconuts === 1) {
+      const li = document.createElement('li');
+      li.innerHTML = '<span>You (a hero)</span><b id="yourGift">1 coconut</b>';
+      document.getElementById('donorList').prepend(li);
+      document.getElementById('donorCount').textContent = '5';
+    } else {
+      document.getElementById('yourGift').textContent = coconuts + ' coconuts';
+    }
+    if (coconuts === 25) openModal('🏆', 'Legendary donor', 'You have given 25 coconuts. Tiki Tiki Samoala has named you his best friend. Kevin is a little upset about this.');
+  };
+
+  // Share
+  document.getElementById('shareBtn').onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(location.href);
+      openModal('📋', 'Link copied', 'Send it to everyone. Tiki is counting on you. Crabbo is also counting, but on his claws.');
+    } catch {
+      openModal('📋', 'Copy this link', location.href);
+    }
+  };
+</script>
+</body>
+</html>
