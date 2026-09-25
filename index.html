@@ -648,8 +648,16 @@
 
   function renderLeaderboard() {
     const lb = $('leaderboard');
-    const rows = Object.values(shared.leaders || {})
-      .filter(r => r && r.name && r.cents > 0)
+    // Add up every donation by name (same name in any capitals counts as one person)
+    const totals = {};
+    Object.values(shared.donors || {}).forEach(d => {
+      if (!d || !d.name || d.name === 'Anonymous' || !(d.cents > 0)) return;
+      const k = leaderKey(d.name);
+      if (!k) return;
+      if (!totals[k]) totals[k] = { name: d.name, cents: 0 };
+      totals[k].cents += d.cents;
+    });
+    const rows = Object.values(totals)
       .sort((a, b) => b.cents - a.cents)
       .slice(0, 10);
     lb.innerHTML = '';
@@ -699,15 +707,14 @@
   async function refresh() {
     if (!ONLINE) { setStatus(false); render(); return; }
     try {
-      const [total, coconuts, count, donors, comments, leaders] = await Promise.all([
+      const [total, coconuts, count, donors, comments] = await Promise.all([
         api('/tiki/total.json'),
         api('/tiki/coconuts.json'),
         api('/tiki/count.json'),
-        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=3'),
-        api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30'),
-        api('/tiki/leaders.json').catch(() => ({}))
+        api('/tiki/donors.json'),
+        api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30')
       ]);
-      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {}, leaders: leaders || {} };
+      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {} };
       setStatus(true);
     } catch (e) {
       setStatus(false);
@@ -719,11 +726,6 @@
     if (!ONLINE) {
       shared.total += cents; shared.count += 1;
       shared.donors['d' + Date.now()] = { name, cents, time: Date.now() };
-      const k = leaderKey(name);
-      if (name !== 'Anonymous' && k) {
-        const cur = shared.leaders[k] || { name, cents: 0 };
-        shared.leaders[k] = { name, cents: cur.cents + cents };
-      }
       store.set('tikiLocalShared_launch', shared);
       return;
     }
@@ -734,14 +736,7 @@
     await api('/tiki/donors.json', { method: 'POST', body: JSON.stringify({
       name, cents, time: { '.sv': 'timestamp' }
     }) });
-    const k = leaderKey(name);
-    if (name !== 'Anonymous' && k) {
-      try {
-        await api('/tiki/leaders/' + k + '.json', { method: 'PATCH', body: JSON.stringify({
-          name, cents: { '.sv': { increment: cents } }
-        }) });
-      } catch (e) { /* leaderboard is a bonus; the donation already went through */ }
-    }
+
   }
 
   async function sendCoconut(n = 1) {
