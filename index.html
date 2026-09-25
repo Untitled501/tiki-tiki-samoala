@@ -1011,12 +1011,14 @@
   ];
   let adsShown = 0;
   function showAd() {
-    if (adsShown >= 3 || games.classList.contains('open') || modal.classList.contains('open')) return;
+    if (adsShown >= 3 || !ad.hidden) return;
+    // If a popup or the games are open, try again in a few seconds instead of skipping
+    if (games.classList.contains('open') || modal.classList.contains('open') || document.hidden) { setTimeout(showAd, 5000); return; }
     $('adText').textContent = adTexts[adsShown % adTexts.length];
     adsShown++;
     ad.hidden = false;
   }
-  function hideAd() { ad.hidden = true; if (adsShown < 3) setTimeout(showAd, 90000); }
+  function hideAd() { ad.hidden = true; if (adsShown < 3) setTimeout(showAd, 60000); }
   $('adX').onclick = hideAd;
   $('adNo').onclick = hideAd;
   $('adYes').onclick = () => {
@@ -1027,9 +1029,9 @@
     } else {
       openModal('🐦', 'Gerald is disappointed', 'You do not even have $5. Gerald flew away. Honestly, you dodged a seagull.');
     }
-    if (adsShown < 3) setTimeout(showAd, 90000);
+    if (adsShown < 3) setTimeout(showAd, 60000);
   };
-  setTimeout(showAd, 30000);
+  setTimeout(showAd, 15000);
 
   // Villain news toasts (just jokes, the real total does not change)
   const villainNews = [
