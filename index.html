@@ -177,6 +177,9 @@
   .ticker-track span b { background: var(--wood); padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
   @keyframes tick { to { transform: translateX(-100%); } }
   .bar { top: 36px; }
+  .lb-link { margin-left: auto; margin-right: 12px; color: var(--wood); background: var(--sky); font-weight: 900; text-decoration: none; padding: 4px 14px; border-radius: 99px; border: 3px solid var(--wood); }
+  .lb-btn { text-align: center; text-decoration: none; }
+  #lb-h { scroll-margin-top: 16px; }
 
   /* verified badge + mood */
   .verified { position: relative; display: inline-block; margin-top: 8px; font: inherit; font-size: .82rem; font-weight: 900; color: #0B6E60; background: #E6F7F3; border: 2px solid #0B6E60; border-radius: 99px; padding: 2px 10px; cursor: pointer; }
@@ -193,7 +196,7 @@
   .leaderboard .who { font-weight: 900; overflow-wrap: anywhere; }
   .leaderboard .amt { font-family: var(--display); color: var(--wave); font-size: 1.15rem; }
   .leaderboard li.top1 { background: #FFF1C9; }
-  .leaderboard .empty { display: block; text-align: center; padding: 18px; }
+  .leaderboard .empty { display: block; grid-column: 1 / -1; text-align: center; padding: 8px; font-weight: 700; }
 
   /* poke tiki */
   .poke-wrap { position: relative; }
@@ -274,6 +277,7 @@
 
 <div class="bar">
   <div class="logo">FundMyTiki</div>
+  <a class="lb-link" href="#lb-h">🏆 Leaderboard</a>
   <small>The #1 fundraising site on Coconoodle Island</small>
 </div>
 
@@ -431,6 +435,7 @@
     <button class="btn btn-main" id="donateBtn">Donate</button>
     <button class="btn btn-alt" id="coconutBtn">Give a coconut 🥥</button>
     <button class="btn btn-alt" id="shareBtn">Share</button>
+    <a class="btn btn-alt lb-btn" href="#lb-h">🏆 See the leaderboard</a>
     <div class="coconuts" id="coconutMsg" aria-live="polite">Coconuts are free and unlimited. Tiki loves them.</div>
     <div class="donors">
       <h3>Recent donors</h3>
@@ -1011,14 +1016,14 @@
   ];
   let adsShown = 0;
   function showAd() {
-    if (adsShown >= 3 || !ad.hidden) return;
+    if (adsShown >= 2 || !ad.hidden) return;
     // If a popup or the games are open, try again in a few seconds instead of skipping
     if (games.classList.contains('open') || modal.classList.contains('open') || document.hidden) { setTimeout(showAd, 5000); return; }
     $('adText').textContent = adTexts[adsShown % adTexts.length];
     adsShown++;
     ad.hidden = false;
   }
-  function hideAd() { ad.hidden = true; if (adsShown < 3) setTimeout(showAd, 60000); }
+  function hideAd() { ad.hidden = true; if (adsShown < 2) setTimeout(showAd, 180000); }
   $('adX').onclick = hideAd;
   $('adNo').onclick = hideAd;
   $('adYes').onclick = () => {
@@ -1029,9 +1034,9 @@
     } else {
       openModal('🐦', 'Gerald is disappointed', 'You do not even have $5. Gerald flew away. Honestly, you dodged a seagull.');
     }
-    if (adsShown < 3) setTimeout(showAd, 60000);
+    if (adsShown < 2) setTimeout(showAd, 180000);
   };
-  setTimeout(showAd, 15000);
+  setTimeout(showAd, 60000);
 
   // Villain news toasts (just jokes, the real total does not change)
   const villainNews = [
