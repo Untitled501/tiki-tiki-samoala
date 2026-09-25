@@ -122,6 +122,13 @@
   /* comments */
   .comment { background: #fff; border-radius: 18px; padding: 14px 18px; margin-bottom: 12px; border: 3px solid #F1DDBF; }
   .comment b { color: var(--sunset); }
+  .comment small { float: right; font-size: .8rem; opacity: .7; }
+  .comment p { overflow-wrap: anywhere; }
+  .comment-form { background: var(--sky); border-radius: 18px; padding: 16px 18px; margin-bottom: 18px; }
+  .comment-form label { display: block; font-weight: 900; font-size: .9rem; margin: 6px 0 4px; }
+  .comment-form input, .comment-form textarea { width: 100%; font: inherit; padding: 9px 12px; border: 3px solid var(--wood); border-radius: 12px; background: #fff; color: var(--wood); resize: vertical; }
+  .comment-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .comment-row .btn { width: auto; padding: 10px 20px; }
 
   /* footer uses the sad photo */
   footer { position: relative; margin-top: 56px; padding: 90px 24px 40px; text-align: center; color: var(--paper); background: url("slide7-sad.jpg") center / cover; }
@@ -265,6 +272,14 @@
 
     <section aria-labelledby="comments-h">
       <h2 id="comments-h">Words of support</h2>
+      <div class="comment-form">
+        <label for="cName">Your name</label>
+        <input id="cName" maxlength="30" placeholder="Anonymous" autocomplete="off">
+        <label for="cText">Your message to Tiki</label>
+        <textarea id="cText" maxlength="280" rows="3" placeholder="Stay strong king..."></textarea>
+        <div class="comment-row"><small id="cCount">0 / 280</small><button class="btn btn-main" id="cPost" type="button">Post comment</button></div>
+      </div>
+      <div id="liveComments"></div>
       <div class="comment"><b>Crabbo Gambino</b><p>i know where u stand tiki. u always stand there. u cant move</p></div>
       <div class="comment"><b>Kevin (coconut)</b><p>...</p></div>
       <div class="comment"><b>Gerald the Seagull</b><p>have u heard about SkibidiCoin 2? cant go down twice</p></div>
@@ -383,7 +398,8 @@
 
   let wallet = store.get('tikiWallet', WALLET_START);
   let myCoconuts = store.get('tikiMyCoconuts', 0);
-  let shared = store.get('tikiLocalShared', { total: 0, coconuts: 0, count: 0, donors: {} });
+  let shared = store.get('tikiLocalShared', { total: 0, coconuts: 0, count: 0, donors: {}, comments: {} });
+  if (!shared.comments) shared.comments = {};
 
   const $ = id => document.getElementById(id);
   const money = cents => '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -412,6 +428,32 @@
         li.append(name, amt);
         list.append(li);
       });
+
+    const box = $('liveComments');
+    box.innerHTML = '';
+    Object.values(shared.comments || {})
+      .sort((a, b) => (b.time || 0) - (a.time || 0))
+      .slice(0, 30)
+      .forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'comment';
+        const who = document.createElement('b');
+        const when = document.createElement('small');
+        const text = document.createElement('p');
+        who.textContent = c.name || 'Anonymous';
+        when.textContent = c.time ? timeAgo(c.time) : '';
+        text.textContent = c.text || '';
+        div.append(who, when, text);
+        box.append(div);
+      });
+  }
+
+  function timeAgo(ms) {
+    const sec = Math.max(0, (Date.now() - ms) / 1000);
+    if (sec < 60) return 'just now';
+    if (sec < 3600) return Math.floor(sec / 60) + ' min ago';
+    if (sec < 86400) return Math.floor(sec / 3600) + ' hr ago';
+    return Math.floor(sec / 86400) + ' days ago';
   }
 
   function setStatus(ok) {
@@ -430,13 +472,14 @@
   async function refresh() {
     if (!ONLINE) { setStatus(false); render(); return; }
     try {
-      const [total, coconuts, count, donors] = await Promise.all([
+      const [total, coconuts, count, donors, comments] = await Promise.all([
         api('/tiki/total.json'),
         api('/tiki/coconuts.json'),
         api('/tiki/count.json'),
-        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=8')
+        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=8'),
+        api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30')
       ]);
-      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {} };
+      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {} };
       setStatus(true);
     } catch (e) {
       setStatus(false);
@@ -519,6 +562,33 @@
       $('coconutMsg').textContent = '🐜 That coconut got lost. Try again.';
     }
     refresh();
+  };
+
+  // Comments
+  $('cText').oninput = () => { $('cCount').textContent = $('cText').value.length + ' / 280'; };
+  let lastPost = 0;
+  $('cPost').onclick = async () => {
+    const text = $('cText').value.trim().slice(0, 280);
+    const name = $('cName').value.trim().slice(0, 30) || 'Anonymous';
+    if (!text) return openModal('🤔', 'Empty comment', 'Type a message first. Tiki cannot read silence. Kevin can, but Kevin is a coconut.');
+    if (Date.now() - lastPost < 15000) return openModal('🐢', 'Slow down', 'Wait a few seconds before posting again. Tiki reads very slowly. He is made of wood.');
+    const btn = $('cPost');
+    btn.disabled = true; btn.textContent = 'Posting...';
+    try {
+      if (ONLINE) {
+        await api('/tiki/comments.json', { method: 'POST', body: JSON.stringify({ name, text, time: { '.sv': 'timestamp' } }) });
+      } else {
+        shared.comments['c' + Date.now()] = { name, text, time: Date.now() };
+        store.set('tikiLocalShared', shared);
+      }
+      lastPost = Date.now();
+      $('cText').value = ''; $('cCount').textContent = '0 / 280';
+      openModal('💬', 'Comment posted!', 'Tiki read it. He is smiling. (He is always smiling.)');
+    } catch (e) {
+      openModal('🐜', 'Comment failed', 'The termites ate your comment. Try again in a second.');
+    }
+    btn.disabled = false; btn.textContent = 'Post comment';
+    await refresh();
   };
 
   refresh();
