@@ -170,6 +170,69 @@
   .pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); z-index: 1; font-size: 2rem; color: var(--flower); text-shadow: 0 2px 0 var(--wood); line-height: 1; }
   #wheel { width: 100%; height: auto; display: block; transition: transform 4s cubic-bezier(.17,.67,.2,1); }
 
+  /* news ticker */
+  .ticker { background: var(--flower); color: var(--paper); height: 36px; overflow: hidden; white-space: nowrap; font-weight: 900; font-size: .92rem; display: flex; align-items: center; border-bottom: 3px solid var(--wood); }
+  .ticker-track { display: inline-block; padding-left: 100%; animation: tick 60s linear infinite; }
+  .ticker-track span { margin-right: 48px; }
+  .ticker-track span b { background: var(--wood); padding: 2px 8px; border-radius: 6px; margin-right: 8px; }
+  @keyframes tick { to { transform: translateX(-100%); } }
+  .bar { top: 36px; }
+
+  /* verified badge + mood */
+  .verified { position: relative; display: inline-block; margin-top: 8px; font: inherit; font-size: .82rem; font-weight: 900; color: #0B6E60; background: #E6F7F3; border: 2px solid #0B6E60; border-radius: 99px; padding: 2px 10px; cursor: pointer; }
+  .verified::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); background: var(--wood); color: var(--paper); padding: 4px 10px; border-radius: 8px; white-space: nowrap; font-size: .8rem; opacity: 0; pointer-events: none; transition: opacity .15s; }
+  .verified:hover::after, .verified:focus-visible::after { opacity: 1; }
+  .mood { background: #fff; border: 2px dashed var(--sand); border-radius: 12px; padding: 6px 10px; margin-bottom: 12px; font-size: .9rem; }
+  .mood b { color: var(--sunset); }
+
+  /* leaderboard */
+  .leaderboard { list-style: none; border: 4px solid var(--wood); border-radius: 18px; overflow: hidden; background: #fff; }
+  .leaderboard li { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 10px 16px; border-bottom: 2px solid #F1DDBF; }
+  .leaderboard li:last-child { border-bottom: 0; }
+  .leaderboard .rank { font-family: var(--display); font-size: 1.4rem; text-align: center; }
+  .leaderboard .who { font-weight: 900; overflow-wrap: anywhere; }
+  .leaderboard .amt { font-family: var(--display); color: var(--wave); font-size: 1.15rem; }
+  .leaderboard li.top1 { background: #FFF1C9; }
+  .leaderboard .empty { display: block; text-align: center; padding: 18px; }
+
+  /* poke tiki */
+  .poke-wrap { position: relative; }
+  .tiki-poke { background: none; border: 0; padding: 0; cursor: pointer; display: block; width: 100%; }
+  .tiki-poke.shake img { animation: shake .35s; }
+  @keyframes shake { 25% { transform: rotate(-7deg) translateX(-4px); } 75% { transform: rotate(2deg) translateX(4px); } }
+  .poke-hint { text-align: center; font-size: .82rem; font-weight: 700; margin-top: 8px; opacity: .75; }
+  .bubble { position: absolute; top: -14px; right: -12px; max-width: 180px; background: #fff; border: 3px solid var(--wood); border-radius: 16px; padding: 8px 12px; font-weight: 900; font-size: .9rem; z-index: 2; box-shadow: 3px 3px 0 var(--wood); }
+
+  /* crabbo walking */
+  .crab { position: fixed; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); left: -70px; z-index: 7; font-size: 2.6rem; background: none; border: 0; cursor: pointer; line-height: 1; }
+  .crab.walk { animation: crabwalk 12s linear forwards; }
+  @keyframes crabwalk { 0% { left: -70px; transform: translateY(0); } 10%,30%,50%,70%,90% { transform: translateY(-6px); } 20%,40%,60%,80% { transform: translateY(0); } 100% { left: calc(100% + 70px); } }
+
+  /* gerald ad */
+  .ad { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 7; width: min(300px, calc(100% - 32px)); background: #FFFF66; color: #111; border: 4px dashed #E00; border-radius: 6px; padding: 14px; font-family: 'Comic Sans MS', 'Chalkboard SE', var(--body); box-shadow: 6px 6px 0 #000; }
+  .ad .ad-tag { font-size: .7rem; font-weight: 700; opacity: .6; }
+  .ad h3 { font-family: Impact, 'Arial Black', sans-serif; color: #E00; font-size: 1.4rem; margin: 4px 0; }
+  .ad p { font-size: .9rem; }
+  .ad-row { display: flex; gap: 8px; margin-top: 10px; }
+  .ad-row button { flex: 1; font: inherit; font-weight: 900; padding: 8px; border: 2px solid #000; border-radius: 6px; cursor: pointer; }
+  .ad-yes { background: #0C0; color: #fff; }
+  .ad-no { background: #fff; font-size: .8rem !important; }
+  .ad-x { position: absolute; top: 4px; right: 8px; background: none; border: 0; font-size: 1rem; cursor: pointer; }
+
+  /* toast */
+  .toast { position: fixed; top: 48px; left: 50%; transform: translateX(-50%); z-index: 7; background: var(--wood); color: var(--paper); border-radius: 14px; padding: 10px 16px; font-weight: 700; box-shadow: 4px 4px 0 var(--flower); max-width: calc(100% - 32px); text-align: center; }
+  .toast small { display: block; opacity: .7; font-size: .75rem; }
+
+  /* coconut confetti + termite swarm */
+  .fx { position: fixed; top: -60px; z-index: 11; pointer-events: none; font-size: 2rem; animation: fall linear forwards; }
+  @keyframes fall { to { transform: translateY(calc(100vh + 120px)) rotate(540deg); } }
+  .ant { position: fixed; z-index: 11; pointer-events: none; font-size: 1.6rem; animation: crawl linear forwards; }
+  @keyframes crawl { to { transform: translateX(calc(100vw + 100px)); } }
+
+  .terms-link { background: none; border: 0; color: var(--sky); text-decoration: underline; font: inherit; cursor: pointer; margin-top: 10px; }
+  .modal-card p { white-space: pre-line; }
+  .modal-img { width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 5px solid var(--wood); margin: 0 auto 8px; animation: shake .5s 3; }
+
   /* modal */
   .modal { position: fixed; inset: 0; background: rgba(60,25,8,.75); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
   .modal.open { display: flex; }
@@ -191,10 +254,23 @@
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
+    .ticker-track { padding-left: 16px; }
   }
 </style>
 </head>
 <body>
+
+<div class="ticker" aria-label="Island news">
+  <div class="ticker-track">
+    <span><b>BREAKING</b>Crabbo spotted near Tiki's hammock</span>
+    <span><b>UPDATE</b>Kevin still silent, experts say "he is a coconut"</span>
+    <span><b>LEGAL</b>Pineapple buffet sues Tiki again</span>
+    <span><b>MARKETS</b>SkibidiCoin down 100%, Gerald says "buy the dip"</span>
+    <span><b>WEATHER</b>Sunny, with a 90% chance of termites</span>
+    <span><b>SPORTS</b>Tiki wins staring contest for 400th year in a row</span>
+    <span><b>BREAKING</b>Local crab raises interest rate to two pinches</span>
+  </div>
+</div>
 
 <div class="bar">
   <div class="logo">FundMyTiki</div>
@@ -214,7 +290,11 @@
     <section aria-labelledby="meet-h">
       <h2 id="meet-h">Meet Tiki</h2>
       <div class="meet">
-        <img src="tiki-portrait.jpg" alt="Tiki Tiki Samoala, a wooden tiki with leaves on his head and a pink flower">
+        <div class="poke-wrap">
+          <button class="tiki-poke" id="tikiPoke" type="button" aria-label="Poke Tiki"><img src="tiki-portrait.jpg" alt="Tiki Tiki Samoala, a wooden tiki with leaves on his head and a pink flower"></button>
+          <div class="bubble" id="bubble" aria-live="polite" hidden></div>
+          <div class="poke-hint">👆 Tap Tiki</div>
+        </div>
         <div>
           <p>Tiki Tiki Samoala has stood on the same beach for 400 years. He has never once stopped smiling, because his face is carved that way. He cannot stop. He has tried.</p>
           <p>This year, everything went wrong. He needs your help.</p>
@@ -266,6 +346,12 @@
           <button id="next" aria-label="Next slide">Next</button>
         </div>
       </div>
+    </section>
+
+    <section aria-labelledby="lb-h">
+      <h2 id="lb-h">🏆 Biggest Tiki Supporters</h2>
+      <p style="margin-bottom:14px">Donate with your name to get on the board. Everything you give under the same name adds up.</p>
+      <ol class="leaderboard" id="leaderboard"><li><span class="empty">Loading legends...</span></li></ol>
     </section>
 
     <section aria-labelledby="troubles-h">
@@ -325,8 +411,10 @@
     <img class="donate-face" src="tiki-face.jpg" alt="">
     <div class="raised" id="raised">$3.47</div>
     <div class="goal">raised of a <b>$1,000,000,000</b> goal</div>
+    <button class="verified" id="verified" type="button" data-tip="Verified by Kevin 🥥">✅ Verified Charity</button>
     <div class="progress"><div id="bar"></div></div>
     <div class="stats"><b id="donorCount">4</b> donations and <b id="coconutTotal">0</b> coconuts from everyone</div>
+    <div class="mood">Tiki's mood: <b id="mood">😰 Doomed</b></div>
     <div class="live" id="liveStatus">Connecting...</div>
 
     <div class="wallet">Your wallet: <b id="wallet">$100.99</b><small>Fake money. Everyone starts with $100.99. Tap 💰 Earn money to get more.</small></div>
@@ -390,14 +478,28 @@
   </div>
 </div>
 
+<button class="crab" id="crab" type="button" aria-label="Crabbo Gambino is walking by. Click him." hidden>🦀</button>
+
+<div class="ad" id="gAd" hidden>
+  <button class="ad-x" id="adX" type="button" aria-label="Close ad">✕</button>
+  <div class="ad-tag">SPONSORED BY GERALD</div>
+  <h3>🐦 SKIBIDICOIN 2</h3>
+  <p id="adText">It CAN'T go down twice!!! Mathematically impossible (Gerald did the math).</p>
+  <div class="ad-row"><button class="ad-yes" id="adYes" type="button">INVEST $5 NOW</button><button class="ad-no" id="adNo" type="button">no thanks, I like being poor</button></div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
 <footer>
   <h2>Do it for Tiki</h2>
   <p>Every coconut counts. Kevin is watching.</p>
+  <button class="terms-link" id="termsLink" type="button">Terms and Conditions</button>
   <small>FundMyTiki is a joke. Tiki Tiki Samoala is not real and cannot receive money. Please do not send money. Kevin is also not real.</small>
 </footer>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
+    <img class="modal-img" id="modalImg" src="tiki-face.jpg" alt="" hidden>
     <div class="big" id="modalEmoji">🚫</div>
     <h3 id="modalTitle">Donation failed</h3>
     <p id="modalText"></p>
@@ -434,7 +536,8 @@
 
   // Modal
   const closeBtn = document.getElementById('closeModal');
-  function openModal(emoji, title, text) {
+  function openModal(emoji, title, text, showTiki) {
+    document.getElementById('modalImg').hidden = !showTiki;
     document.getElementById('modalEmoji').textContent = emoji;
     document.getElementById('modalTitle').textContent = title;
     document.getElementById('modalText').textContent = text;
@@ -465,7 +568,8 @@
 
   let wallet = store.get('tikiWallet_launch', WALLET_START);
   let myCoconuts = store.get('tikiMyCoconuts_launch', 0);
-  let shared = store.get('tikiLocalShared_launch', { total: 0, coconuts: 0, count: 0, donors: {}, comments: {} });
+  let shared = store.get('tikiLocalShared_launch', { total: 0, coconuts: 0, count: 0, donors: {}, comments: {}, leaders: {} });
+  if (!shared.leaders) shared.leaders = {};
   if (!shared.comments) shared.comments = {};
 
   const $ = id => document.getElementById(id);
@@ -479,6 +583,8 @@
     $('coconutTotal').textContent = (shared.coconuts || 0).toLocaleString('en-US');
     $('wallet').textContent = money(wallet);
     $('fabWallet').textContent = money(wallet);
+    $('mood').textContent = moodFor(raised);
+    renderLeaderboard();
     $('gWallet').textContent = money(wallet);
     $('donateBtn').textContent = wallet > 0 ? 'Donate' : 'Wallet empty';
     $('donateBtn').disabled = wallet <= 0;
@@ -525,6 +631,45 @@
       });
   }
 
+  function moodFor(raisedCents) {
+    const d = raisedCents / 100;
+    if (d < 50) return '😰 Doomed';
+    if (d < 150) return '😟 Slightly less doomed';
+    if (d < 400) return '🙂 Cautiously hopeful';
+    if (d < 1000) return '😄 Thriving (still $999,999,000 short)';
+    if (d < 5000) return '🤩 Ecstatic. Crabbo is nervous.';
+    return '👑 Island royalty. Gerald wants to be friends again.';
+  }
+
+  function renderLeaderboard() {
+    const lb = $('leaderboard');
+    const rows = Object.values(shared.leaders || {})
+      .filter(r => r && r.name && r.cents > 0)
+      .sort((a, b) => b.cents - a.cents)
+      .slice(0, 10);
+    lb.innerHTML = '';
+    if (!rows.length) {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="empty">Nobody yet. Be the first legend. 👑</span>';
+      lb.append(li);
+      return;
+    }
+    const medals = ['🥇', '🥈', '🥉'];
+    rows.forEach((r, i) => {
+      const li = document.createElement('li');
+      if (i === 0) li.className = 'top1';
+      const rank = document.createElement('span'); rank.className = 'rank'; rank.textContent = medals[i] || (i + 1);
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = r.name + (i === 0 ? ' (Tiki\'s favorite)' : '');
+      const amt = document.createElement('span'); amt.className = 'amt'; amt.textContent = money(r.cents);
+      li.append(rank, who, amt);
+      lb.append(li);
+    });
+  }
+
+  function leaderKey(name) {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  }
+
   function timeAgo(ms) {
     const sec = Math.max(0, (Date.now() - ms) / 1000);
     if (sec < 60) return 'just now';
@@ -549,14 +694,15 @@
   async function refresh() {
     if (!ONLINE) { setStatus(false); render(); return; }
     try {
-      const [total, coconuts, count, donors, comments] = await Promise.all([
+      const [total, coconuts, count, donors, comments, leaders] = await Promise.all([
         api('/tiki/total.json'),
         api('/tiki/coconuts.json'),
         api('/tiki/count.json'),
         api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=3'),
-        api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30')
+        api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30'),
+        api('/tiki/leaders.json').catch(() => ({}))
       ]);
-      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {} };
+      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {}, leaders: leaders || {} };
       setStatus(true);
     } catch (e) {
       setStatus(false);
@@ -568,6 +714,11 @@
     if (!ONLINE) {
       shared.total += cents; shared.count += 1;
       shared.donors['d' + Date.now()] = { name, cents, time: Date.now() };
+      const k = leaderKey(name);
+      if (name !== 'Anonymous' && k) {
+        const cur = shared.leaders[k] || { name, cents: 0 };
+        shared.leaders[k] = { name, cents: cur.cents + cents };
+      }
       store.set('tikiLocalShared_launch', shared);
       return;
     }
@@ -578,6 +729,14 @@
     await api('/tiki/donors.json', { method: 'POST', body: JSON.stringify({
       name, cents, time: { '.sv': 'timestamp' }
     }) });
+    const k = leaderKey(name);
+    if (name !== 'Anonymous' && k) {
+      try {
+        await api('/tiki/leaders/' + k + '.json', { method: 'PATCH', body: JSON.stringify({
+          name, cents: { '.sv': { increment: cents } }
+        }) });
+      } catch (e) { /* leaderboard is a bonus; the donation already went through */ }
+    }
   }
 
   async function sendCoconut(n = 1) {
@@ -612,19 +771,34 @@
     const name = $('donorName').value.trim().slice(0, 30) || 'Anonymous';
     const btn = $('donateBtn');
     btn.disabled = true; btn.textContent = 'Sending...';
+    const walletBefore = wallet;
+    const raisedBefore = START_CENTS + (shared.total || 0);
+    let ok = false;
     try {
       await sendDonation(name, cents);
+      ok = true;
       wallet -= cents;
       store.set('tikiWallet_launch', wallet);
       $('amount').value = '';
-      const [emoji, text] = cents === WALLET_START
-        ? ['🏆', 'You gave EVERYTHING. All $100.99. Tiki is carving your face into a palm tree.']
+      const gaveAll = cents === walletBefore;
+      const [emoji, text] = gaveAll
+        ? ['🏆', 'You gave EVERYTHING. Every last cent. Tiki is carving your face into a palm tree.']
         : thanks[t++ % thanks.length];
       openModal(emoji, 'You gave ' + money(cents) + '!', text + ' You have ' + money(wallet) + ' left.');
+      if (gaveAll) coconutConfetti();
+      if (cents < 100) setTimeout(() => crabWalk('cheap'), 1200);
     } catch (e) {
       openModal('🐜', 'Donation failed', 'The termites ate the connection. Your money is safe. Try again in a second.');
     }
     await refresh();
+    if (ok) {
+      const raisedAfter = Math.max(START_CENTS + (shared.total || 0), raisedBefore + cents);
+      const hit = MILESTONES.filter(m => raisedBefore < m && raisedAfter >= m).pop();
+      if (hit) setTimeout(() => {
+        coconutConfetti();
+        openModal('🎉', 'Tiki hit ' + money(hit) + '!', milestoneLines[MILESTONES.indexOf(hit) % milestoneLines.length], true);
+      }, 1800);
+    }
   };
 
   $('coconutBtn').onclick = async () => {
@@ -770,6 +944,160 @@
       $('spinBtn').disabled = false;
     }, reduce ? 50 : 4100);
   };
+
+
+  // ============================================================
+  // JOKES: milestones, confetti, Crabbo, Gerald ads, poking Tiki,
+  // villain news, verified badge, terms
+  // ============================================================
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MILESTONES = [10000, 25000, 50000, 100000, 250000, 500000, 1000000];
+  const milestoneLines = [
+    'Tiki says: "I have been smiling for 400 years, but this is the first time I mean it."',
+    'Tiki says: "I bought Kevin a tiny hat. He looks great. He did not say thank you. He is a coconut."',
+    'Tiki says: "I paid Crabbo back. He asked for more. I said no. I am growing as a person. As a statue."',
+    'Tiki says: "The termites have been evicted. They left a one-star review."',
+    'Tiki says: "I am legally allowed back at the pineapple buffet. I will be responsible. (I will not.)"',
+    'Tiki says: "Gerald called. I did not answer. I do not have hands. But I would not have answered."',
+    'Tiki says: "Only $999,990,000 to go. We are basically there."'
+  ];
+
+  function coconutConfetti() {
+    if (reduceMotion) return;
+    for (let i = 0; i < 40; i++) {
+      const c = document.createElement('div');
+      c.className = 'fx';
+      c.textContent = ['🥥', '🥥', '🌺', '🍍'][i % 4];
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+      c.style.animationDelay = Math.random() * 1.2 + 's';
+      document.body.append(c);
+      setTimeout(() => c.remove(), 6500);
+    }
+  }
+
+  // Crabbo walks across the bottom. Click him and he steals $1.
+  const crab = $('crab');
+  let crabBusy = false;
+  function crabWalk(reason) {
+    if (crabBusy || reduceMotion) return;
+    crabBusy = true;
+    crab.dataset.reason = reason || '';
+    crab.hidden = false;
+    crab.classList.remove('walk'); void crab.offsetWidth; crab.classList.add('walk');
+    setTimeout(() => { crab.hidden = true; crab.classList.remove('walk'); crabBusy = false; }, 12100);
+  }
+  crab.onclick = () => {
+    crab.hidden = true; crab.classList.remove('walk'); crabBusy = false;
+    if (wallet >= 100) {
+      earn(-100);
+      openModal('🦀', 'Crabbo pinched $1!', (crab.dataset.reason === 'cheap'
+        ? 'Crabbo saw that tiny donation and came to collect his cut. '
+        : 'You poked Crabbo. Crabbo pinched your wallet. ') + 'You now have ' + money(wallet) + '. Maybe do not touch the crab.');
+    } else {
+      openModal('🦀', 'Crabbo checked your wallet', 'It was empty. Crabbo felt so bad he left you a tiny sand dollar. It is not real money.');
+    }
+  };
+  (function scheduleCrab() {
+    setTimeout(() => { if (!document.hidden) crabWalk(); scheduleCrab(); }, 35000 + Math.random() * 40000);
+  })();
+
+  // Gerald's sketchy ads (up to 3 per visit)
+  const ad = $('gAd');
+  const adTexts = [
+    "It CAN'T go down twice!!! Mathematically impossible (Gerald did the math).",
+    'Doctors HATE this one weird seagull. Turn $5 into $5,000,000 (results not typical).',
+    'LAST CHANCE!!! Only 3 coins left!!! (There are 900 trillion coins left.)'
+  ];
+  let adsShown = 0;
+  function showAd() {
+    if (adsShown >= 3 || games.classList.contains('open') || modal.classList.contains('open')) return;
+    $('adText').textContent = adTexts[adsShown % adTexts.length];
+    adsShown++;
+    ad.hidden = false;
+  }
+  function hideAd() { ad.hidden = true; if (adsShown < 3) setTimeout(showAd, 90000); }
+  $('adX').onclick = hideAd;
+  $('adNo').onclick = hideAd;
+  $('adYes').onclick = () => {
+    ad.hidden = true;
+    if (wallet >= 500) {
+      earn(-500);
+      openModal('📉', 'SkibidiCoin 2 went down', 'It went down twice. Gerald is gone. Your $5 is gone. Tiki is not mad, just disappointed.\n\nYou have ' + money(wallet) + ' left.');
+    } else {
+      openModal('🐦', 'Gerald is disappointed', 'You do not even have $5. Gerald flew away. Honestly, you dodged a seagull.');
+    }
+    if (adsShown < 3) setTimeout(showAd, 90000);
+  };
+  setTimeout(showAd, 30000);
+
+  // Villain news toasts (just jokes, the real total does not change)
+  const villainNews = [
+    '🦀 Crabbo Gambino donated −$2.00 (he calls it "interest")',
+    '🐦 Gerald donated −$5.00 (he says it is an investment)',
+    '🐜 The termites donated 1 wood chip. It was Tiki\'s.',
+    '🦀 Crabbo Gambino donated −$0.50 (a "pinch fee")',
+    '🐦 Gerald donated 1 SkibidiCoin. It is worth nothing.'
+  ];
+  let newsI = 0;
+  function showToast() {
+    const el = $('toast');
+    el.innerHTML = '';
+    el.append(document.createTextNode(villainNews[newsI++ % villainNews.length]));
+    const sm = document.createElement('small'); sm.textContent = '(not real, the total is safe)'; el.append(sm);
+    el.hidden = false;
+    setTimeout(() => { el.hidden = true; }, 6000);
+  }
+  (function scheduleToast() {
+    setTimeout(() => { if (!document.hidden) showToast(); scheduleToast(); }, 50000 + Math.random() * 30000);
+  })();
+
+  // Poke Tiki. 50 pokes summons the termites.
+  const pokeLines = [
+    'please', 'I have not blinked in 400 years', 'that tickles (it does not, I am wood)', 'have you seen Kevin?',
+    'donate pls', 'I am smiling but I am crying', 'stop poking, the termites can hear it', 'is Crabbo behind me?',
+    'I cannot move my arms. please scratch my nose', 'my flower is fine. it is FINE', 'hello', 'one more poke and I invest in SkibidiCoin'
+  ];
+  let pokes = 0, bubbleTimer;
+  $('tikiPoke').onclick = () => {
+    pokes++;
+    const btn = $('tikiPoke');
+    btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake');
+    const b = $('bubble');
+    b.textContent = pokes === 40 ? '10 more pokes and something bad happens' : pokeLines[Math.floor(Math.random() * pokeLines.length)];
+    b.hidden = false;
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(() => { b.hidden = true; }, 2200);
+    if (pokes >= 50) {
+      pokes = 0;
+      termiteSwarm();
+      openModal('🐜', 'The termites heard the knocking', 'You poked Tiki 50 times. The termites thought it was a dinner bell. Tiki is fine. Mostly. He is missing a small piece of his left ear.');
+    }
+  };
+  function termiteSwarm() {
+    if (reduceMotion) return;
+    for (let i = 0; i < 30; i++) {
+      const a = document.createElement('div');
+      a.className = 'ant'; a.textContent = '🐜';
+      a.style.top = Math.random() * 90 + 'vh';
+      a.style.left = '-50px';
+      a.style.animationDuration = (3 + Math.random() * 3) + 's';
+      a.style.animationDelay = Math.random() * 1.5 + 's';
+      document.body.append(a);
+      setTimeout(() => a.remove(), 8000);
+    }
+  }
+
+  $('verified').onclick = () => openModal('✅', 'Verified by Kevin', 'This charity has been fully checked by Kevin, our independent coconut inspector.\n\nKevin cannot read. Kevin cannot see. Kevin is a coconut. But he has never said anything bad about us.');
+
+  $('termsLink').onclick = () => openModal('📜', 'Terms and Conditions', [
+    '1. By visiting this page, you agree to be pinched by Crabbo at least once.',
+    '2. All donations are final. Mostly because they are fake.',
+    '3. Gerald is not a licensed financial advisor. Gerald is a seagull.',
+    '4. Kevin reserves the right to remain silent. Forever.',
+    '5. Tiki is not responsible for termites.',
+    '6. The pineapple buffet ban is still in effect.'
+  ].join('\n'));
 
   // Comments
   $('cText').oninput = () => { $('cCount').textContent = $('cText').value.length + ' / 280'; };
