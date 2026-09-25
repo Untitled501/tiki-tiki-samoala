@@ -136,6 +136,38 @@
   footer * { position: relative; }
   footer h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--sky); margin-bottom: 10px; }
   footer small { display: block; margin-top: 22px; opacity: .8; }
+  footer { padding-bottom: 96px; }
+
+  /* floating earn button */
+  .earn-fab { position: fixed; left: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 8; font-family: var(--display); font-size: 1.1rem; color: var(--wood); background: var(--sand); border: 4px solid var(--wood); border-radius: 99px; padding: 10px 18px; box-shadow: 4px 4px 0 var(--wood); cursor: pointer; }
+  .earn-fab span { background: var(--paper); border-radius: 99px; padding: 1px 10px; margin-left: 6px; font-size: 1rem; }
+  .earn-fab:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--wood); }
+
+  /* games panel */
+  .games { position: fixed; inset: 0; z-index: 9; background: rgba(60,25,8,.75); display: none; align-items: center; justify-content: center; padding: 16px; }
+  .games.open { display: flex; }
+  .games-card { background: var(--paper); border: 5px solid var(--wood); border-radius: 26px; padding: 22px; width: 100%; max-width: 460px; max-height: calc(100% - 8px); overflow-y: auto; box-shadow: 8px 8px 0 var(--wave); }
+  .games-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .games-head h2 { color: var(--sunset); font-size: 1.8rem; }
+  .games-close { background: none; border: 3px solid var(--wood); border-radius: 50%; width: 38px; height: 38px; font-size: 1.1rem; cursor: pointer; color: var(--wood); flex-shrink: 0; }
+  .games-wallet { background: var(--sky); border-radius: 14px; padding: 8px 14px; margin: 12px 0; }
+  .games-wallet b { font-family: var(--display); font-weight: 400; font-size: 1.4rem; color: var(--wave); margin-left: 4px; }
+  .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .tab { font: inherit; font-weight: 900; padding: 10px 6px; border: 3px solid var(--wood); border-radius: 14px; background: var(--paper); color: var(--wood); cursor: pointer; }
+  .tab.on { background: var(--wood); color: var(--paper); }
+  .pane-note { font-size: .95rem; margin-bottom: 10px; }
+  .q-progress { font-weight: 900; color: var(--wave); font-size: .9rem; }
+  .q-text { font-family: var(--display); font-size: 3rem; text-align: center; margin: 10px 0 14px; }
+  .q-row { display: flex; gap: 10px; }
+  .q-row input { flex: 1; min-width: 0; font: inherit; font-size: 1.4rem; padding: 8px 12px; border: 3px solid var(--wood); border-radius: 12px; background: #fff; color: var(--wood); }
+  .q-row .btn { width: auto; margin-top: 0; padding: 10px 20px; }
+  .q-feedback { min-height: 1.6em; margin-top: 12px; font-weight: 900; text-align: center; }
+  .q-feedback.good { color: var(--wave); }
+  .q-feedback.bad { color: var(--sunset); }
+  .q-score { text-align: center; font-size: .92rem; margin-top: 4px; }
+  .wheel-wrap { position: relative; width: min(300px, 100%); margin: 6px auto 4px; }
+  .pointer { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); z-index: 1; font-size: 2rem; color: var(--flower); text-shadow: 0 2px 0 var(--wood); line-height: 1; }
+  #wheel { width: 100%; height: auto; display: block; transition: transform 4s cubic-bezier(.17,.67,.2,1); }
 
   /* modal */
   .modal { position: fixed; inset: 0; background: rgba(60,25,8,.75); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
@@ -296,7 +328,7 @@
     <div class="stats"><b id="donorCount">4</b> donations and <b id="coconutTotal">0</b> coconuts from everyone</div>
     <div class="live" id="liveStatus">Connecting...</div>
 
-    <div class="wallet">Your wallet: <b id="wallet">$100.99</b><small>Fake money. Everyone gets $100.99 and that's it.</small></div>
+    <div class="wallet">Your wallet: <b id="wallet">$100.99</b><small>Fake money. Everyone starts with $100.99. Tap 💰 Earn money to get more.</small></div>
     <label for="donorName">Your name</label>
     <input id="donorName" maxlength="30" placeholder="Anonymous" autocomplete="off">
     <label for="amount">Amount</label>
@@ -323,6 +355,45 @@
     </div>
   </aside>
 </main>
+
+<button class="earn-fab" id="earnFab" type="button" aria-haspopup="dialog">💰 Earn money <span id="fabWallet">$100.99</span></button>
+
+<div class="games" id="games" role="dialog" aria-modal="true" aria-labelledby="gamesTitle">
+  <div class="games-card">
+    <div class="games-head">
+      <h2 id="gamesTitle">Tiki's Money Island</h2>
+      <button class="games-close" id="gamesClose" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="games-wallet">Your wallet: <b id="gWallet">$100.99</b></div>
+    <div class="tabs" role="tablist">
+      <button class="tab on" id="tabMath" role="tab" aria-selected="true" type="button">🧮 Math Quiz</button>
+      <button class="tab" id="tabWheel" role="tab" aria-selected="false" type="button">🎡 Spin the Wheel</button>
+    </div>
+
+    <div class="pane" id="paneMath">
+      <p class="pane-note">Every right answer pays <b>$5</b>. 40 questions per round.</p>
+      <div class="q-progress" id="qProgress">Question 1 of 40</div>
+      <div class="q-text" id="qText">? + ? = ?</div>
+      <div class="q-row">
+        <input id="qAnswer" type="number" inputmode="numeric" placeholder="Answer" aria-label="Your answer">
+        <button class="btn btn-main" id="qSubmit" type="button">Check</button>
+      </div>
+      <div class="q-feedback" id="qFeedback" aria-live="polite"></div>
+      <div class="q-score" id="qScore">Right: 0 · Earned this round: $0.00</div>
+      <button class="btn btn-alt" id="qRestart" type="button" hidden>Play again</button>
+    </div>
+
+    <div class="pane" id="paneWheel" hidden>
+      <p class="pane-note">Each spin costs <b>$20</b>. 1 in 5 chance to get your money back, plus other prizes.</p>
+      <div class="wheel-wrap">
+        <div class="pointer" aria-hidden="true">▼</div>
+        <svg id="wheel" viewBox="0 0 300 300" aria-label="Prize wheel"></svg>
+      </div>
+      <button class="btn btn-main" id="spinBtn" type="button">Spin for $20</button>
+      <div class="q-feedback" id="wheelResult" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
 
 <footer>
   <h2>Do it for Tiki</h2>
@@ -360,6 +431,7 @@
   next.onclick = () => show((current + 1) % slides.length);
   document.addEventListener('keydown', e => {
     if (modal.classList.contains('open')) { if (e.key === 'Escape') closeModal(); return; }
+    if (document.getElementById('games').classList.contains('open')) return;
     if (e.key === 'ArrowRight') next.click();
     if (e.key === 'ArrowLeft') prev.click();
   });
@@ -396,9 +468,9 @@
     set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
   };
 
-  let wallet = store.get('tikiWallet', WALLET_START);
-  let myCoconuts = store.get('tikiMyCoconuts', 0);
-  let shared = store.get('tikiLocalShared', { total: 0, coconuts: 0, count: 0, donors: {}, comments: {} });
+  let wallet = store.get('tikiWallet_launch', WALLET_START);
+  let myCoconuts = store.get('tikiMyCoconuts_launch', 0);
+  let shared = store.get('tikiLocalShared_launch', { total: 0, coconuts: 0, count: 0, donors: {}, comments: {} });
   if (!shared.comments) shared.comments = {};
 
   const $ = id => document.getElementById(id);
@@ -411,6 +483,8 @@
     $('donorCount').textContent = START_DONATIONS + (shared.count || 0);
     $('coconutTotal').textContent = (shared.coconuts || 0).toLocaleString('en-US');
     $('wallet').textContent = money(wallet);
+    $('fabWallet').textContent = money(wallet);
+    $('gWallet').textContent = money(wallet);
     $('donateBtn').textContent = wallet > 0 ? 'Donate' : 'Wallet empty';
     $('donateBtn').disabled = wallet <= 0;
 
@@ -465,7 +539,7 @@
 
   async function api(path, options) {
     const res = await fetch(DB + path, options);
-    if (!res.ok) throw new Error('Database said ' + res.status);
+    if (!res.ok) { const err = new Error('Database said ' + res.status); err.status = res.status; throw err; }
     return res.json();
   }
 
@@ -491,7 +565,7 @@
     if (!ONLINE) {
       shared.total += cents; shared.count += 1;
       shared.donors['d' + Date.now()] = { name, cents, time: Date.now() };
-      store.set('tikiLocalShared', shared);
+      store.set('tikiLocalShared_launch', shared);
       return;
     }
     await api('/tiki.json', { method: 'PATCH', body: JSON.stringify({
@@ -503,9 +577,9 @@
     }) });
   }
 
-  async function sendCoconut() {
-    if (!ONLINE) { shared.coconuts += 1; store.set('tikiLocalShared', shared); return; }
-    await api('/tiki.json', { method: 'PATCH', body: JSON.stringify({ coconuts: { '.sv': { increment: 1 } } }) });
+  async function sendCoconut(n = 1) {
+    if (!ONLINE) { shared.coconuts += n; store.set('tikiLocalShared_launch', shared); return; }
+    await api('/tiki.json', { method: 'PATCH', body: JSON.stringify({ coconuts: { '.sv': { increment: n } } }) });
   }
 
   // Quick amount buttons
@@ -538,7 +612,7 @@
     try {
       await sendDonation(name, cents);
       wallet -= cents;
-      store.set('tikiWallet', wallet);
+      store.set('tikiWallet_launch', wallet);
       $('amount').value = '';
       const [emoji, text] = cents === WALLET_START
         ? ['🏆', 'You gave EVERYTHING. All $100.99. Tiki is carving your face into a palm tree.']
@@ -552,9 +626,9 @@
 
   $('coconutBtn').onclick = async () => {
     try {
-      await sendCoconut();
+      await sendCoconut(1);
       myCoconuts++;
-      store.set('tikiMyCoconuts', myCoconuts);
+      store.set('tikiMyCoconuts_launch', myCoconuts);
       const replies = ['Kevin has a friend now!', 'The termites are jealous.', 'Crabbo is 1 coconut less angry.', 'Tiki built a tiny coconut throne.', 'The flower perked up.'];
       $('coconutMsg').textContent = '🥥 You have given ' + myCoconuts + (myCoconuts === 1 ? ' coconut. ' : ' coconuts. ') + replies[(myCoconuts - 1) % replies.length];
       if (myCoconuts === 25) openModal('🏆', 'Legendary donor', 'You have given 25 coconuts. Tiki has named you his best friend. Kevin is a little upset about this.');
@@ -562,6 +636,136 @@
       $('coconutMsg').textContent = '🐜 That coconut got lost. Try again.';
     }
     refresh();
+  };
+
+  // ============================================================
+  // MINIGAMES: earn money for your wallet
+  // ============================================================
+  function earn(cents) {
+    wallet = Math.max(0, wallet + cents);
+    store.set('tikiWallet_launch', wallet);
+    render();
+  }
+
+  const games = $('games');
+  function openGames() { games.classList.add('open'); if (!$('paneMath').hidden) $('qAnswer').focus(); }
+  function closeGames() { games.classList.remove('open'); $('earnFab').focus(); }
+  $('earnFab').onclick = openGames;
+  $('gamesClose').onclick = closeGames;
+  games.onclick = e => { if (e.target === games) closeGames(); };
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && games.classList.contains('open') && !modal.classList.contains('open')) closeGames();
+  });
+
+  function showTab(which) {
+    const math = which === 'math';
+    $('paneMath').hidden = !math; $('paneWheel').hidden = math;
+    $('tabMath').classList.toggle('on', math); $('tabWheel').classList.toggle('on', !math);
+    $('tabMath').setAttribute('aria-selected', math); $('tabWheel').setAttribute('aria-selected', !math);
+  }
+  $('tabMath').onclick = () => showTab('math');
+  $('tabWheel').onclick = () => showTab('wheel');
+
+  // ---------- Math quiz: 20 addition, 5 subtraction, 15 multiplication, answers 50 or less ----------
+  const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  function makeQuestions() {
+    const qs = [];
+    for (let i = 0; i < 20; i++) { const sum = rand(2, 50); const a = rand(1, sum - 1); qs.push({ text: a + ' + ' + (sum - a), answer: sum }); }
+    for (let i = 0; i < 5; i++) { const a = rand(2, 50); const b = rand(1, a); qs.push({ text: a + ' − ' + b, answer: a - b }); }
+    const pairs = [];
+    for (let a = 1; a <= 10; a++) for (let b = 1; b <= 10; b++) if (a * b <= 50) pairs.push([a, b]);
+    for (let i = 0; i < 15; i++) { const [a, b] = pairs[rand(0, pairs.length - 1)]; qs.push({ text: a + ' × ' + b, answer: a * b }); }
+    for (let i = qs.length - 1; i > 0; i--) { const j = rand(0, i); [qs[i], qs[j]] = [qs[j], qs[i]]; }
+    return qs;
+  }
+  let quiz = makeQuestions(), qIndex = 0, qRight = 0;
+  const wrongLines = ['Crabbo laughed at you.', 'Kevin is disappointed.', 'The termites got that one.', 'Gerald would have gotten that wrong too.'];
+  function showQuestion() {
+    const done = qIndex >= quiz.length;
+    $('qProgress').textContent = done ? 'Round complete!' : 'Question ' + (qIndex + 1) + ' of ' + quiz.length;
+    $('qText').textContent = done ? '🎉' : quiz[qIndex].text + ' = ?';
+    $('qAnswer').disabled = done; $('qSubmit').disabled = done;
+    $('qRestart').hidden = !done;
+    $('qScore').textContent = 'Right: ' + qRight + ' of ' + Math.min(qIndex, quiz.length) + ' · Earned this round: ' + money(qRight * 500);
+    if (!done) { $('qAnswer').value = ''; }
+  }
+  function checkAnswer() {
+    if (qIndex >= quiz.length) return;
+    const raw = $('qAnswer').value.trim();
+    if (raw === '') { $('qFeedback').textContent = 'Type an answer first!'; $('qFeedback').className = 'q-feedback bad'; return; }
+    const q = quiz[qIndex];
+    if (Number(raw) === q.answer) {
+      qRight++; earn(500);
+      $('qFeedback').textContent = '✅ Correct! +$5.00';
+      $('qFeedback').className = 'q-feedback good';
+    } else {
+      $('qFeedback').textContent = '❌ It was ' + q.answer + '. ' + wrongLines[rand(0, wrongLines.length - 1)];
+      $('qFeedback').className = 'q-feedback bad';
+    }
+    qIndex++;
+    showQuestion();
+    if (qIndex >= quiz.length) $('qFeedback').textContent += ' Round over: you got ' + qRight + ' of 40 right and earned ' + money(qRight * 500) + '!';
+    else $('qAnswer').focus();
+  }
+  $('qSubmit').onclick = checkAnswer;
+  $('qAnswer').addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+  $('qRestart').onclick = () => { quiz = makeQuestions(); qIndex = 0; qRight = 0; $('qFeedback').textContent = ''; showQuestion(); $('qAnswer').focus(); };
+  showQuestion();
+
+  // ---------- Prize wheel: $20 per spin, 10 equal slices, 2 of them give your $20 back ----------
+  const SPIN_COST = 2000;
+  const prizes = [
+    { label: '$20 back', cents: 2000, color: '#0FA894', msg: 'You got your $20 back! You did not win, but you did not lose. Tiki calls this "breaking even."' },
+    { label: 'Crabbo 🦀', cents: 0, color: '#D9531E', msg: 'Crabbo Gambino took your $20. He says thanks. He does not mean it.' },
+    { label: '$5', cents: 500, color: '#F4A640', msg: 'You won $5! You paid $20 for it. Great deal.' },
+    { label: '5 🥥 for Tiki', cents: 0, coconuts: 5, color: '#2B7A3A', msg: 'You won 5 coconuts, and they went straight to Tiki! He is thrilled. Your wallet is not.' },
+    { label: '$20 back', cents: 2000, color: '#0FA894', msg: 'Your $20 came back! Kevin was rooting for you.' },
+    { label: 'Gerald 🐦', cents: 0, color: '#5C2F14', msg: 'Gerald swooped in and stole your $20. He invested it in SkibidiCoin. It is gone.' },
+    { label: '$10', cents: 1000, color: '#F4A640', msg: 'You won $10! That is half your money back. Half!' },
+    { label: '$50 JACKPOT', cents: 5000, color: '#FF4F8B', msg: '🎉 JACKPOT! $50! Tiki is so proud he almost stopped smiling. (He cannot.)' },
+    { label: 'Kevin 🥥', cents: 0, color: '#D9531E', msg: 'Kevin the coconut gives you moral support. It is worth $0.' },
+    { label: '$40 double', cents: 4000, color: '#FF4F8B', msg: 'DOUBLE! You turned $20 into $40. Do not tell Crabbo.' }
+  ];
+  (function drawWheel() {
+    const svg = $('wheel'), cx = 150, cy = 150, r = 146, n = prizes.length, step = 360 / n;
+    const pt = deg => [cx + r * Math.sin(deg * Math.PI / 180), cy - r * Math.cos(deg * Math.PI / 180)];
+    let html = '';
+    prizes.forEach((p, i) => {
+      const [x1, y1] = pt(i * step), [x2, y2] = pt((i + 1) * step);
+      html += '<path d="M' + cx + ' ' + cy + ' L' + x1 + ' ' + y1 + ' A' + r + ' ' + r + ' 0 0 1 ' + x2 + ' ' + y2 + ' Z" fill="' + p.color + '" stroke="#5C2F14" stroke-width="3"/>';
+      const mid = i * step + step / 2;
+      html += '<text transform="rotate(' + mid + ' ' + cx + ' ' + cy + ') translate(' + cx + ' 16) rotate(90)" font-family="Nunito, Arial, sans-serif" font-weight="900" font-size="13" fill="#FFF6E8" dominant-baseline="middle">' + p.label + '</text>';
+    });
+    html += '<circle cx="150" cy="150" r="22" fill="#FFF6E8" stroke="#5C2F14" stroke-width="4"/><text x="150" y="151" text-anchor="middle" dominant-baseline="middle" font-size="18">🗿</text>';
+    svg.innerHTML = html;
+  })();
+  let wheelAngle = 0, spinning = false;
+  $('spinBtn').onclick = () => {
+    if (spinning) return;
+    if (wallet < SPIN_COST) {
+      $('wheelResult').textContent = 'You need $20 to spin. Try the math quiz to earn some!';
+      $('wheelResult').className = 'q-feedback bad';
+      return;
+    }
+    spinning = true;
+    $('spinBtn').disabled = true;
+    earn(-SPIN_COST);
+    $('wheelResult').textContent = 'Spinning...'; $('wheelResult').className = 'q-feedback';
+    const i = rand(0, prizes.length - 1);
+    const step = 360 / prizes.length;
+    const target = (360 - (i * step + step / 2)) % 360;
+    wheelAngle += 360 * 5 + ((target - (wheelAngle % 360)) + 360) % 360;
+    $('wheel').style.transform = 'rotate(' + wheelAngle + 'deg)';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(async () => {
+      const p = prizes[i];
+      if (p.cents) earn(p.cents);
+      if (p.coconuts) { try { await sendCoconut(p.coconuts); refresh(); } catch (e) {} }
+      $('wheelResult').textContent = p.msg;
+      $('wheelResult').className = 'q-feedback ' + (p.cents >= SPIN_COST || p.coconuts ? 'good' : 'bad');
+      spinning = false;
+      $('spinBtn').disabled = false;
+    }, reduce ? 50 : 4100);
   };
 
   // Comments
@@ -579,13 +783,17 @@
         await api('/tiki/comments.json', { method: 'POST', body: JSON.stringify({ name, text, time: { '.sv': 'timestamp' } }) });
       } else {
         shared.comments['c' + Date.now()] = { name, text, time: Date.now() };
-        store.set('tikiLocalShared', shared);
+        store.set('tikiLocalShared_launch', shared);
       }
       lastPost = Date.now();
       $('cText').value = ''; $('cCount').textContent = '0 / 280';
       openModal('💬', 'Comment posted!', 'Tiki read it. He is smiling. (He is always smiling.)');
     } catch (e) {
-      openModal('🐜', 'Comment failed', 'The termites ate your comment. Try again in a second.');
+      if (e.status === 401 || e.status === 403) {
+        openModal('🔒', 'Comment blocked', 'Tiki\'s bank said no. The Firebase rules need to be updated to allow comments.');
+      } else {
+        openModal('🐜', 'Comment failed', 'The termites ate your comment. Try again in a second.');
+      }
     }
     btn.disabled = false; btn.textContent = 'Post comment';
     await refresh();
