@@ -55,7 +55,7 @@
   .facts dd { text-align: right; }
 
   /* donation box */
-  .donate-box { position: sticky; top: 16px; margin-top: -70px; z-index: 3; background: var(--paper); border: 5px solid var(--wood); border-radius: 26px; padding: 24px; box-shadow: 8px 8px 0 var(--sand); align-self: start; }
+  .donate-box { position: relative; margin-top: -70px; z-index: 3; background: var(--paper); border: 5px solid var(--wood); border-radius: 26px; padding: 24px; box-shadow: 8px 8px 0 var(--sand); align-self: start; }
   .donate-face { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 4px solid var(--wood); margin: -62px auto 10px; background: var(--sky); }
   .raised { font-family: var(--display); font-size: 2.6rem; color: var(--wave); line-height: 1; }
   .goal { font-size: .95rem; margin-top: 4px; }
@@ -71,6 +71,17 @@
   .donors h3 { font-size: 1.15rem; margin-bottom: 8px; color: var(--sunset); }
   .donors li { list-style: none; display: flex; justify-content: space-between; gap: 10px; font-size: .92rem; padding: 5px 0; }
   .donors li b { white-space: nowrap; color: var(--flower); }
+  .live { font-size: .85rem; font-weight: 700; padding: 6px 10px; border-radius: 10px; margin-bottom: 14px; background: #E6F7F3; color: #0B6E60; }
+  .live.off { background: #F7EDE0; color: var(--wood); }
+  .wallet { background: var(--sky); border-radius: 14px; padding: 10px 14px; margin-bottom: 14px; }
+  .wallet b { font-family: var(--display); font-weight: 400; font-size: 1.4rem; color: var(--wave); margin-left: 4px; }
+  .wallet small { display: block; font-size: .8rem; }
+  .donate-box label { display: block; font-weight: 900; font-size: .9rem; margin: 8px 0 4px; }
+  .donate-box input { width: 100%; font: inherit; padding: 9px 12px; border: 3px solid var(--wood); border-radius: 12px; background: #fff; color: var(--wood); }
+  .amount-row { display: flex; align-items: center; gap: 6px; font-family: var(--display); font-size: 1.3rem; }
+  .quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+  .quick button { font: inherit; font-weight: 900; font-size: .85rem; padding: 6px 0; border: 2px solid var(--wood); border-radius: 10px; background: var(--paper); color: var(--wood); cursor: pointer; }
+  .btn:disabled { opacity: .5; cursor: default; }
 
   /* slideshow */
   .slides { background: var(--wood); border-radius: 26px; overflow: hidden; color: var(--paper); }
@@ -262,19 +273,33 @@
     </section>
   </div>
 
-  <aside class="donate-box" aria-label="Donation progress">
+  <aside class="donate-box" aria-label="Donate to Tiki">
     <img class="donate-face" src="tiki-face.jpg" alt="">
     <div class="raised" id="raised">$3.47</div>
     <div class="goal">raised of a <b>$1,000,000,000</b> goal</div>
     <div class="progress"><div id="bar"></div></div>
-    <div class="stats"><b id="donorCount">4</b> donors, and 1 very aggressive crab</div>
-    <button class="btn btn-main" id="donateBtn">Donate now</button>
-    <button class="btn btn-alt" id="coconutBtn">Give a coconut</button>
+    <div class="stats"><b id="donorCount">4</b> donations and <b id="coconutTotal">0</b> coconuts from everyone</div>
+    <div class="live" id="liveStatus">Connecting...</div>
+
+    <div class="wallet">Your wallet: <b id="wallet">$100.99</b><small>Fake money. Everyone gets $100.99 and that's it.</small></div>
+    <label for="donorName">Your name</label>
+    <input id="donorName" maxlength="30" placeholder="Anonymous" autocomplete="off">
+    <label for="amount">Amount</label>
+    <div class="amount-row"><span>$</span><input id="amount" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="5.00"></div>
+    <div class="quick">
+      <button type="button" data-amt="1">$1</button>
+      <button type="button" data-amt="5">$5</button>
+      <button type="button" data-amt="20">$20</button>
+      <button type="button" data-amt="all">All of it</button>
+    </div>
+    <button class="btn btn-main" id="donateBtn">Donate</button>
+    <button class="btn btn-alt" id="coconutBtn">Give a coconut 🥥</button>
     <button class="btn btn-alt" id="shareBtn">Share</button>
-    <div class="coconuts" id="coconutMsg" aria-live="polite">🥥 0 coconuts given</div>
+    <div class="coconuts" id="coconutMsg" aria-live="polite">Coconuts are free and unlimited. Tiki loves them.</div>
     <div class="donors">
       <h3>Recent donors</h3>
-      <ul id="donorList">
+      <ul id="liveDonors"></ul>
+      <ul>
         <li><span>Anonymous Seagull</span><b>1 shiny rock</b></li>
         <li><span>Tiki's Mom (a tree)</span><b>$3.00</b></li>
         <li><span>A Nice Crab (not Crabbo)</span><b>$0.47</b></li>
@@ -338,48 +363,166 @@
   closeBtn.onclick = closeModal;
   modal.onclick = e => { if (e.target === modal) closeModal(); };
 
-  // Donate: always fails, a new excuse each time
-  const reasons = [
-    ['🥥', 'Tiki Tiki Samoala only accepts payment in coconuts. Try the coconut button.'],
-    ['🦀', 'Crabbo Gambino intercepted your donation. He says thank you.'],
-    ['📉', 'Your donation was accidentally turned into SkibidiCoin. It is now worth $0.'],
-    ['🐜', 'The termites ate the payment server. It was made of wood. Everything here is made of wood.'],
-    ['🌊', 'A big wave washed your donation out to sea. Tiki watched it go. He was smiling. He is always smiling.'],
-    ['🐦', 'Gerald the Seagull stole your donation and flew away. Classic Gerald.']
-  ];
-  let r = 0;
-  document.getElementById('donateBtn').onclick = () => {
-    const [emoji, text] = reasons[r++ % reasons.length];
-    openModal(emoji, 'Donation failed', text);
+  // ============================================================
+  // SHARED DONATIONS (Firebase). Paste your database link between
+  // the quotes below. Leave it empty and donations only show on
+  // this device.
+  // ============================================================
+  const DATABASE_URL = "";
+
+  const DB = DATABASE_URL.trim().replace(/\/+$/, '');
+  const ONLINE = DB.startsWith('https://');
+  const START_CENTS = 347;      // the joke $3.47 from before
+  const START_DONATIONS = 4;    // the joke donors already listed
+  const WALLET_START = 10099;   // $100.99 per person, in cents
+
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
   };
 
-  // Coconuts: the only thing that "works"
-  let coconuts = 0, raised = 3.47;
-  const replies = [
-    'Kevin has a friend now!',
-    'Tiki is crying (happy tears, they are made of sap)',
-    'Crabbo is 1 coconut less angry',
-    'The flower perked up a little',
-    'The termites are jealous',
-    'This is the best day of Tiki\'s life'
-  ];
-  document.getElementById('coconutBtn').onclick = () => {
-    coconuts++;
-    raised += 0.01;
-    document.getElementById('raised').textContent = '$' + raised.toFixed(2);
-    document.getElementById('bar').style.width = Math.min(0.4 + coconuts * 2, 100) + '%';
-    document.getElementById('coconutMsg').textContent =
-      '🥥 ' + coconuts + (coconuts === 1 ? ' coconut' : ' coconuts') + ' given. ' + replies[(coconuts - 1) % replies.length];
-    if (coconuts === 1) {
-      const li = document.createElement('li');
-      li.innerHTML = '<span>You (a hero)</span><b id="yourGift">1 coconut</b>';
-      document.getElementById('donorList').prepend(li);
-      document.getElementById('donorCount').textContent = '5';
-    } else {
-      document.getElementById('yourGift').textContent = coconuts + ' coconuts';
+  let wallet = store.get('tikiWallet', WALLET_START);
+  let myCoconuts = store.get('tikiMyCoconuts', 0);
+  let shared = store.get('tikiLocalShared', { total: 0, coconuts: 0, count: 0, donors: {} });
+
+  const $ = id => document.getElementById(id);
+  const money = cents => '$' + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function render() {
+    const raised = START_CENTS + (shared.total || 0);
+    $('raised').textContent = money(raised);
+    $('bar').style.width = Math.max(0.4, Math.min(100, raised / 100000000000 * 100)) + '%';
+    $('donorCount').textContent = START_DONATIONS + (shared.count || 0);
+    $('coconutTotal').textContent = (shared.coconuts || 0).toLocaleString('en-US');
+    $('wallet').textContent = money(wallet);
+    $('donateBtn').textContent = wallet > 0 ? 'Donate' : 'Wallet empty';
+    $('donateBtn').disabled = wallet <= 0;
+
+    const list = $('liveDonors');
+    list.innerHTML = '';
+    Object.values(shared.donors || {})
+      .sort((a, b) => (b.time || 0) - (a.time || 0))
+      .slice(0, 8)
+      .forEach(d => {
+        const li = document.createElement('li');
+        const name = document.createElement('span');
+        const amt = document.createElement('b');
+        name.textContent = d.name || 'Anonymous';
+        amt.textContent = money(d.cents || 0);
+        li.append(name, amt);
+        list.append(li);
+      });
+  }
+
+  function setStatus(ok) {
+    const el = $('liveStatus');
+    if (!ONLINE) { el.textContent = '⚪ Test mode: donations only show on this device'; el.className = 'live off'; return; }
+    el.textContent = ok ? '🟢 Live: everyone sees every donation' : '🔴 Can\'t reach Tiki\'s bank right now';
+    el.className = ok ? 'live on' : 'live off';
+  }
+
+  async function api(path, options) {
+    const res = await fetch(DB + path, options);
+    if (!res.ok) throw new Error('Database said ' + res.status);
+    return res.json();
+  }
+
+  async function refresh() {
+    if (!ONLINE) { setStatus(false); render(); return; }
+    try {
+      const [total, coconuts, count, donors] = await Promise.all([
+        api('/tiki/total.json'),
+        api('/tiki/coconuts.json'),
+        api('/tiki/count.json'),
+        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=8')
+      ]);
+      shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {} };
+      setStatus(true);
+    } catch (e) {
+      setStatus(false);
     }
-    if (coconuts === 25) openModal('🏆', 'Legendary donor', 'You have given 25 coconuts. Tiki Tiki Samoala has named you his best friend. Kevin is a little upset about this.');
+    render();
+  }
+
+  async function sendDonation(name, cents) {
+    if (!ONLINE) {
+      shared.total += cents; shared.count += 1;
+      shared.donors['d' + Date.now()] = { name, cents, time: Date.now() };
+      store.set('tikiLocalShared', shared);
+      return;
+    }
+    await api('/tiki.json', { method: 'PATCH', body: JSON.stringify({
+      total: { '.sv': { increment: cents } },
+      count: { '.sv': { increment: 1 } }
+    }) });
+    await api('/tiki/donors.json', { method: 'POST', body: JSON.stringify({
+      name, cents, time: { '.sv': 'timestamp' }
+    }) });
+  }
+
+  async function sendCoconut() {
+    if (!ONLINE) { shared.coconuts += 1; store.set('tikiLocalShared', shared); return; }
+    await api('/tiki.json', { method: 'PATCH', body: JSON.stringify({ coconuts: { '.sv': { increment: 1 } } }) });
+  }
+
+  // Quick amount buttons
+  document.querySelectorAll('.quick button').forEach(b => {
+    b.onclick = () => {
+      const v = b.dataset.amt === 'all' ? wallet / 100 : Math.min(Number(b.dataset.amt), wallet / 100);
+      $('amount').value = v.toFixed(2);
+    };
+  });
+
+  const thanks = [
+    ['😭', 'Tiki is crying. They are happy tears. They are made of sap.'],
+    ['🦀', 'Crabbo saw your donation and backed away slowly. You scared a crab.'],
+    ['🌺', 'The flower behind his ear perked up a little. That was you.'],
+    ['🐦', 'Gerald heard about this and wants to talk to you about an investment. Do not answer.'],
+    ['😁', 'Tiki is smiling. He is always smiling. But this time he means it.'],
+    ['🥥', 'Kevin the coconut would like to thank you personally. He cannot. He is a coconut.']
+  ];
+  let t = 0;
+
+  $('donateBtn').onclick = async () => {
+    if (wallet <= 0) return openModal('💸', 'You are broke', 'You gave all $100.99. You and Tiki are the same now. You can still give coconuts.');
+    const cents = Math.round(parseFloat($('amount').value) * 100);
+    if (!(cents > 0)) return openModal('🤨', 'Hmm', 'Type how much you want to give first. Tiki cannot accept $0. He already has plenty of that.');
+    if (cents > wallet) return openModal('🚫', 'Not enough money', 'You only have ' + money(wallet) + ' left. You cannot give more than you have. Tiki learned this the hard way.');
+
+    const name = $('donorName').value.trim().slice(0, 30) || 'Anonymous';
+    const btn = $('donateBtn');
+    btn.disabled = true; btn.textContent = 'Sending...';
+    try {
+      await sendDonation(name, cents);
+      wallet -= cents;
+      store.set('tikiWallet', wallet);
+      $('amount').value = '';
+      const [emoji, text] = cents === WALLET_START
+        ? ['🏆', 'You gave EVERYTHING. All $100.99. Tiki is carving your face into a palm tree.']
+        : thanks[t++ % thanks.length];
+      openModal(emoji, 'You gave ' + money(cents) + '!', text + ' You have ' + money(wallet) + ' left.');
+    } catch (e) {
+      openModal('🐜', 'Donation failed', 'The termites ate the connection. Your money is safe. Try again in a second.');
+    }
+    await refresh();
   };
+
+  $('coconutBtn').onclick = async () => {
+    try {
+      await sendCoconut();
+      myCoconuts++;
+      store.set('tikiMyCoconuts', myCoconuts);
+      const replies = ['Kevin has a friend now!', 'The termites are jealous.', 'Crabbo is 1 coconut less angry.', 'Tiki built a tiny coconut throne.', 'The flower perked up.'];
+      $('coconutMsg').textContent = '🥥 You have given ' + myCoconuts + (myCoconuts === 1 ? ' coconut. ' : ' coconuts. ') + replies[(myCoconuts - 1) % replies.length];
+      if (myCoconuts === 25) openModal('🏆', 'Legendary donor', 'You have given 25 coconuts. Tiki has named you his best friend. Kevin is a little upset about this.');
+    } catch (e) {
+      $('coconutMsg').textContent = '🐜 That coconut got lost. Try again.';
+    }
+    refresh();
+  };
+
+  refresh();
+  setInterval(() => { if (!document.hidden) refresh(); }, 5000);
 
   // Share
   document.getElementById('shareBtn').onclick = async () => {
