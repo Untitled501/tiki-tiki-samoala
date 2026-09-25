@@ -353,7 +353,7 @@
     </section>
 
     <section aria-labelledby="lb-h">
-      <h2 id="lb-h">🏆 Biggest Tiki Supporters</h2>
+      <h2 id="lb-h">🏆 Top 5 Tiki Supporters</h2>
       <p style="margin-bottom:14px">Donate with your name to get on the board. Everything you give under the same name adds up.</p>
       <ol class="leaderboard" id="leaderboard"><li><span class="empty">Loading legends...</span></li></ol>
     </section>
@@ -659,7 +659,7 @@
     });
     const rows = Object.values(totals)
       .sort((a, b) => b.cents - a.cents)
-      .slice(0, 10);
+      .slice(0, 5);
     lb.innerHTML = '';
     if (!rows.length) {
       const li = document.createElement('li');
