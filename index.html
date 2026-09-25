@@ -24,6 +24,7 @@
   html { scroll-behavior: smooth; }
   body { font-family: var(--body); background: var(--paper); color: var(--wood); line-height: 1.6; font-size: 17px; }
   img { max-width: 100%; display: block; }
+  [hidden] { display: none !important; }
   :focus-visible { outline: 3px solid var(--flower); outline-offset: 3px; }
   h1, h2, h3 { font-family: var(--display); font-weight: 400; line-height: 1.05; }
 
@@ -346,12 +347,6 @@
     <div class="donors">
       <h3>Recent donors</h3>
       <ul id="liveDonors"></ul>
-      <ul>
-        <li><span>Anonymous Seagull</span><b>1 shiny rock</b></li>
-        <li><span>Tiki's Mom (a tree)</span><b>$3.00</b></li>
-        <li><span>A Nice Crab (not Crabbo)</span><b>$0.47</b></li>
-        <li><span>Kevin</span><b>moral support</b></li>
-      </ul>
     </div>
   </aside>
 </main>
@@ -490,18 +485,26 @@
 
     const list = $('liveDonors');
     list.innerHTML = '';
-    Object.values(shared.donors || {})
+    // Only the 3 newest donations show. Joke donors fill the empty spots
+    // and get pushed out as real donations come in.
+    const jokeDonors = [
+      { name: 'Anonymous Seagull', label: '1 shiny rock' },
+      { name: "Tiki's Mom (a tree)", label: '$3.00' },
+      { name: 'A Nice Crab (not Crabbo)', label: '$0.47' }
+    ];
+    const real = Object.values(shared.donors || {})
       .sort((a, b) => (b.time || 0) - (a.time || 0))
-      .slice(0, 8)
-      .forEach(d => {
-        const li = document.createElement('li');
-        const name = document.createElement('span');
-        const amt = document.createElement('b');
-        name.textContent = d.name || 'Anonymous';
-        amt.textContent = money(d.cents || 0);
-        li.append(name, amt);
-        list.append(li);
-      });
+      .slice(0, 3)
+      .map(d => ({ name: d.name || 'Anonymous', label: money(d.cents || 0) }));
+    real.concat(jokeDonors).slice(0, 3).forEach(d => {
+      const li = document.createElement('li');
+      const name = document.createElement('span');
+      const amt = document.createElement('b');
+      name.textContent = d.name;
+      amt.textContent = d.label;
+      li.append(name, amt);
+      list.append(li);
+    });
 
     const box = $('liveComments');
     box.innerHTML = '';
@@ -550,7 +553,7 @@
         api('/tiki/total.json'),
         api('/tiki/coconuts.json'),
         api('/tiki/count.json'),
-        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=8'),
+        api('/tiki/donors.json?orderBy=%22%24key%22&limitToLast=3'),
         api('/tiki/comments.json?orderBy=%22%24key%22&limitToLast=30')
       ]);
       shared = { total: total || 0, coconuts: coconuts || 0, count: count || 0, donors: donors || {}, comments: comments || {} };
